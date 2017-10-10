@@ -1,14 +1,21 @@
-
-<div class="input-group">
-    <span class="input-group-addon">Mã khối</span>
-    <input type="text" class="form-control">
+<form id="editProfileForm" class="span8" method="post" ng-submit="addGrade()">
+<div>{{result}}</div>
+<div class="row">
+    <label class="span2">Mã khối</label>
+    <input type="text" class="span4" name="gradeId" required="required" ng-model="inputGrade.gradeId">
 </div>
-<div class="input-group">
-    <span class="input-group-addon">Tên khối</span>
-    <input type="text" class="form-control">
+<div class="row">
+    <label class="span2">Tên khối</label>
+    <input type="text" class="span4" name="gradeName" required="required" ng-model="inputGrade.gradeName">
 </div>
-<div class="input-group">
-    <span class="input-group-addon">Số tiết buổi chiều</span>
-    <input type="text" class="form-control">
+<div class="row">
+    <label class="span2">Số tiết buổi chiều</label>
+    <input type="text" class="span4" name="lectureHours" required="required" ng-model="inputGrade.lectureNumber">
 </div>
+<div class="row">
+    <label class="span2"></label>
+    <input type="submit" class="span2 btn" value="Thêm">
+    <input type="button" class="span2 btn" value="Sửa">
+</div>
+</form>
 

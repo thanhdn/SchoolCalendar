@@ -19,7 +19,6 @@
         </table>
     </div>-->
     <div class="row">
-        <input type="hidden" name="id" ng-model="inputGrade.id" />
         <label class="span2">Mã khối</label>
         <input type="text" class="span4" name="gradeId" required="required" ng-model="inputGrade.gradeId">
     </div>
@@ -33,7 +32,7 @@
     </div>
     <div class="row">
         <label class="span2"></label>
-        <input type="submit" class="span2 btn btn-primary" value="Lưu">
+        <input type="submit" class="span2 btn" value="Thêm">
         <!--<a class="span2 btn" href="#/grades">Hủy</a>-->
         <input type="reset" class="span2 btn" value="Hủy">
     </div>
@@ -41,24 +40,27 @@
 
 
 <div class="panel panel-default">
+    <!--<div class="panel-heading">
+        <input type="button" class="span2 btn" value="Thêm mới" onclick="javascript:document.location = '#/add-new-grade'">
+        <input type="button" class="span2 btn" value="Sửa" onclick="javascript:document.location = '#/add-new-grade'" ng-show="editButtonDisplay">
+
+    </div>-->
     <div class="panel-body">
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered" ng-init="initDisplayListGrades()">
             <thead>
             <tr>
                 <th class="span1">#</th>
+
                 <th>Mã khối</th>
                 <th>Tên khối</th>
                 <th>Số tiết buổi chiều</th>
-                <th>Cập nhật/Xóa</th>
             </tr>
             </thead>
-            <tr ng-repeat="grade in lstGrades track by $index">
+            <tr ng-repeat="grade in lstGrades track by $index" ng-click="detailGrade(grade)">
                 <th class="row">{{$index + 1}}</th>
                 <td>{{grade.gradeId}}</td>
                 <td>{{grade.gradeName}}</td>
                 <td>{{grade.lectureNumber}}</td>
-                <td><input type="button" class="btn btn-primary" value="Cập nhật">
-                    <input type="button" class="btn btn-danger" value="Xóa"></td>
             </tr>
         </table>
     </div>

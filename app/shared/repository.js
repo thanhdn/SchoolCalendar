@@ -2,8 +2,8 @@
 schoolCalendarApp.
 factory('repository', ['$http', function($http) {
     return {
-        retrieve: function() {
-            return $http.get('http://localhost:8080/grade/view')
+        retrieve: function(URL, parameters) {
+            return $http.get(URL, parameters)
                 .success(function (data) {
                     return data;
                 })

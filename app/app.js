@@ -47,4 +47,5 @@ controller('schoolCalendarController', ['$scope', '$location', function($scope, 
             return "";
         }
     }
+
 }]);

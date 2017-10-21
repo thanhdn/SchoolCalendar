@@ -1,45 +1,194 @@
-
 'use strict';
 
-schoolCalendarApp.factory('repositoryServices', ['$http', function($http) {
+schoolCalendarApp.factory('componentObj', [componentObj]);
+schoolCalendarApp.factory('featureParamObj', [featureParamObj]);
+schoolCalendarApp.factory('collectionUtil', [collectionUtil]);
+schoolCalendarApp.factory('baseRepository', ['$q', '$http', baseRepository]);
+schoolCalendarApp.factory('repositoryServices', ['baseRepository', repositoryServices]);
+schoolCalendarApp.factory('resourceServices', ['$q', "ngI18nResourceBundle", "ngI18nConfig", initStaticResources]);
+
+// define all object will be used as communicate objects
+// these object will be used as request parameters to api services
+// all object based on JSON format,
+// the associated api must be implement the format of those objects
+function featureParamObj() {
     return {
-        // update action, used to dertermine what action do the user need to perform
-        updateAction : 'UDP',
-        // remove action, used to dertermine what action do the user need to perform
-        removeAction : 'REM',
-
-        retrieve : function(URL, parameters) {
-            return $http.get(URL, parameters)
-                .success(function (data) {
-                    return data;
-                })
-                .error(function (err) {
-                    return err;
-                });
+        // --GRADE
+        //--------------------------------------------------------------
+        // the parameter holding any value binding from the edit form
+        prmGrade :  {
+            grade : {
+                id            : "",
+                gradeId       : "",
+                gradeName     : "",
+                lectureNumber : "",
+                creationDate  : "",
+                updateDate    : "",
+                creator       : ""
+            },
+            // UDP: update, REM: remove
+            action        : "INS"
         },
 
-        add : function(URL, parameters) {
-            return $http.post(URL, parameters)
-                .success(function (data) {
-                    return data;
-                })
-                .error(function (err) {
-                    return err;
-                });
+        // the parameter holding the keywords, pagination information
+        prmFilterGrade : {
+            keywords       : [],
+            startDate      : "",
+            endDate        : "",
+            page           : 0,
+            fetchingNumber : 50
+        }
+    };
+};
+
+// define all component objects
+function componentObj() {
+    return {
+        sidebar : [
+            {
+                header: "",
+                menu: [{
+                    label:"",
+                    url:""
+                }]
+            }
+        ]
+    }
+}
+
+function baseRepository($q, $http) {
+    return {
+        // The string indicate update action
+        UPDATE_ACTION : 'UDP',
+        // the string indicate remove action
+        REMOVE_ACTION : 'REM',
+        // the string indicate insert action
+        INS_ACTION    : 'INS',
+        // the string indicate filter action
+        FILTER_ACTION : 'FIL',
+        // the string indicate sorting action
+        SORT_ACTION   : 'SOR',
+        // the string indicate viewing action
+        VIEW_ACTION   : 'VIE',
+
+        // check the given action is matched available definition actions
+        isValidAction : function(action) {
+            var repositoryActions = [
+                UPDATE_ACTION,
+                REMOVE_ACTION,
+                INS_ACTION,
+                FILT_ACTION,
+                SORT_ACTION,
+                VIEW_ACTION
+            ];
+            return repositoryActions.includes(action);
         },
 
-        remove : function(URL, parameters) {
-            return $http.post(URL, parameters)
+        // retrieve data by using get method
+        get : function(URL, parameters) {
+            var result = $q.defer();
+            $http.get(URL, parameters)
+            .success(function (data) {
+                result.resolve(data);
+            })
+            .error(function (err) {
+                result.reject(err);
+            });
+            return result.promise;
+        },
+
+        // update data by using post method
+        post : function(URL, parameters) {
+            var result = $q.defer();
+            $http.post(URL, parameters)
                 .success(function (data) {
-                    return data;
+                    result.resolve(data);
                 })
                 .error(function (err) {
-                    return err;
+                    result.reject(err);
                 });
+            return result.promise;
         }
     }
-}]).factory('collectionUtil', [function() {
+};
+
+function repositoryServices(featureParamObj, collectionUtil, baseRepository) {
     return {
+        context : 'http://localhost:8080',
+
+        targetFeature: '',
+
+        formInput: null,
+
+        formFilter: null,
+
+        initFeature: function(_targetFeature, _formInput, _formFilter) {
+            this.targetFeature = _targetFeature;
+            this.formInput = _formInput;
+            this.formFilter = _formFilter;
+        },
+
+        generateBaseUrl: function() {
+            var baseUrl = context.concat("/", targetFeature);
+            return baseUrl;
+        },
+
+        // the common method help perform any tasks such as
+        // update, remove
+        save : function() {
+            // generate base url for current working feature
+            // examples: if current working feature is grade,
+            // the base url would be http://localhost/grade
+            var baseUrl = generateBaseUrl();
+
+            // checking url has generated
+            // checking given action has passed
+            // checking form input is existed values
+            if(baseUrl != '' &&
+               typeof formInput !== 'undefined' /*&&
+               baseRepository.isValidAction(givenAction)*/) {
+                var completedUrl = baseUrl.concat('/', "req");
+                // calling the service to perform the task
+                return baseRepository.post(completedUrl, formInput);
+            }
+            return null;
+        },
+
+        filter : function() {
+            // generate base url for current working feature
+            // examples: if current working feature is grade,
+            // the base url would be http://localhost/grade
+            var baseUrl = generateBaseUrl();
+
+            // checking url has generated
+            // checking given action has passed
+            // checking form input is existed values
+            if(baseUrl != '' &&
+               typeof formInput !== 'undefined' /*&&
+               baseRepository.isValidAction(givenAction)*/) {
+                var completedUrl = baseUrl.concat('/', "serving");
+                // calling the service to perform the task
+                return baseRepository.get(completedUrl, formInput);
+            }
+            return null;
+        },
+
+        edit : function() {
+
+        },
+
+        remove : function() {
+
+        },
+
+
+    }
+};
+
+// an util for checking array, collection
+function collectionUtil() {
+    return {
+        // check whether the given array is empty
         isEmptyArray : function(collection) {
             if(collection == null || collection.length == 0) {
                 return true;
@@ -47,6 +196,7 @@ schoolCalendarApp.factory('repositoryServices', ['$http', function($http) {
             return false;
         },
 
+        // check whether the givent given destination variale is existed in given collection
         isExistedPropertyValue : function(propertyName, dest, collection) {
             if(typeof collection === 'undefined' ||
                 typeof dest === 'undefined') {
@@ -61,62 +211,20 @@ schoolCalendarApp.factory('repositoryServices', ['$http', function($http) {
 
             return false;
         }
-
-
     }
-}]).factory('componentObj', [function() {
+};
+
+// init static resources by using resource bundle
+function initStaticResources($q, ngI18nResourceBundle, ngI18nConfig) {
     return {
-        // --GRADE
-        //--------------------------------------------------------------
-        // the parameter holding any value binding from the edit form
-        inputGrade :  {
-            grade: {
-                id            :"",
-                gradeId       : "",
-                gradeName     : "",
-                lectureNumber : "",
-                creationDate  : "",
-                updateDate    : "",
-                creator       : ""
-            },
-            // UDP: update, REM: remove
-            action        : "INS"
-        },
-
-        // the parameter holding the keywords, pagination information
-        inputFilterGrade : {
-            keywords       : [],
-            startDate      : "",
-            endDate        : "",
-            page           : 0,
-            fetchingNumber : 50
-    }
-}
-}]).factory('repositoryInterface', ['repositoryServices', function(repositoryServices) {
-    return {
-        CONTEXT : 'http://localhost:8080',
-
-        targetFeature: "",
-
-        formInput:  {},
-
-        formFilter: {},
-
-        save : function() {
-
-        },
-
-        edit : function() {
-
-        },
-
-        remove : function() {
-
-        },
-
-        filter : function() {
-
+        loadingStaticResources : function(){
+            var staticResources = $q.defer();
+            ngI18nResourceBundle.get({locale: "vi"}).success(function (resourceBundle) {
+                staticResources.resolve(resourceBundle);
+            }).error(function () {
+                staticResources.reject("Failed to get resource");
+            });
+            return staticResources.promise;
         }
     }
-}]);
-
+}

@@ -50,7 +50,7 @@ angular.module('schoolCalendarApp.grades', ['ngRoute'])
                     repositoryServices.add("http://localhost:8080/grade/add", $scope.inputGrade)
                         .success(function(data) {
                             // reset the form
-                            $scope.inputGrade = {action:"INS"};
+                            $scope.inputGrade = {action : repositoryServices.INS_ACTION};
                             // refresh the list grades after insert or update a record
                             $scope.retrieveGrades();
                         }).error(function (err) {
@@ -66,7 +66,7 @@ angular.module('schoolCalendarApp.grades', ['ngRoute'])
                     if(collectionUtil.isExistedPropertyValue("id", _grade, $scope.lstGrades)) {
                         $scope.inputGrade["grade"] = angular.copy(_grade);
                     }
-                    $scope.inputGrade["action"] = repositoryServices.updateAction;
+                    $scope.inputGrade["action"] = repositoryServices.UPDATE_ACTION;
                     // scroll to the update form position
                     $window.scrollTo(0, 0);
                 };
@@ -75,13 +75,27 @@ angular.module('schoolCalendarApp.grades', ['ngRoute'])
                     // check whether the target update grade is existed,
                     // to prevent the conflict between UI data and DB data
                     if(collectionUtil.isExistedPropertyValue("id", _grade, $scope.lstGrades)) {
-                        $scope.inputGrade["grade"] = angular.copy(_grade);
+                        $scope.inputGrade["grade"].id = _grade.id;
                     }
                     // setting the action to the parameters
-                    $scope.inputGrade["action"] = repositoryServices.removeAction;
+                    $scope.inputGrade["action"] = repositoryServices.REMOVE_ACTION;
                     // calling service to remove the target grade
                     $scope.saveGrade();
                 }
-            }]);
+}]);
 
 
+function gradeCtrl($scope, repository) {
+     // the parameter holding any value binding from the edit form
+    $scope.inputGrade = componentObj.inputGrade;
+    // the parameter holding the keywords, pagination information
+    $scope.inputFilterGrade = componentObj.inputFilterGrade;
+
+    repository.initFeature("grade", $scope.inputGrade, $scope.inputFilterGrade);
+
+    $scope.save = repository.save();
+    $scope.edit = repository.edit();
+    $scope.remove = repository.remove();
+    //$scope.save = repository.save();
+    $scope.feature = repository;
+}

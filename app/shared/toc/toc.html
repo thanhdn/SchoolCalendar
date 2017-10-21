@@ -1,0 +1,14 @@
+<div class="ui vertical inverted sticky menu" style="left: 0px; top: 0px;">
+  <div class="item">
+    <a class="ui logo icon image" href="/">
+      <img src="/images/logo.png">
+    </a>
+    <a href="/"><b>UI Docs</b></a>
+  </div>
+  <div class="item" ng-repeat="item in sidebar">
+    <div class="header">{{item.header}}</div>
+    <div class="menu">
+      <a ng-repeat="anchor in item.menu" href="{{anchor.url}}">{{anchor.label}}</a>
+    </div>
+  </div>
+</div>

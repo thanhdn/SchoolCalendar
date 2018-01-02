@@ -10,7 +10,7 @@
   <meta name="description" content="">
   <meta name="keywords" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="assets/css/bootstrap-combined.min.css" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/css/main.css" rel="stylesheet">
   <link href="assets/css/semantic.min.css" rel="stylesheet">
   <!--<script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>-->
@@ -19,12 +19,12 @@
 <div class="pusher">
   <div class="full height">
     <div class="toc">
-        <div class="ui vertical inverted sticky menu" style="left: 0px; top: 0px; height: 100vh">
+        <div class="ui vertical inverted sticky menu" style="left: 0px; top: 0px; height: 100vh; position: fixed">
             <div class="item">
                 <a class="ui logo icon image" href="/">
                     <img src="assets/images/logo.png">
                 </a>
-                <a href="/"><b>UI Docs</b></a>
+                <a href="/"><b>Quản lý Thời Khóa Biểu</b></a>
             </div>
             <div class="item" ng-repeat="item in sidebar">
                 <div class="header">{{item.header}}</div>
@@ -34,6 +34,9 @@
             </div>
         </div>
     </div>
+      <div class="article">
+          <div class="page page-about" ng-view></div>
+      </div>
   </div>
 </div>
 
@@ -45,7 +48,6 @@
   <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
 
-  <div class="page page-about" ng-view></div>
 
 <!--  <div>Angular seed app: v<span app-version></span></div>-->
 
@@ -56,12 +58,13 @@
   <script src="bower_components/angular-route/angular-route.js"></script>
 <!--  <script src="assets/js/locations.js"></script>-->
   <script src="assets/js/ng-i18n.js"></script>
+    <script src="components/grades/grades.js"></script>
+    <script src="components/classes/classes.js"></script>
+    <script src="components/teachers/teachers.js"></script>
+    <script src="components/courses/courses.js"></script>
   <script src="app.js"></script>
   <script src="shared/repository.js"></script>
-<!--  <script src="components/grades/grades.js"></script>
-  <script src="components/classes/classes.js"></script>
-  <script src="components/teachers/teachers.js"></script>
-  <script src="components/courses/courses.js"></script>-->
+
 
 <!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular-animate.js"></script>-->
 

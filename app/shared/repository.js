@@ -4,7 +4,7 @@ schoolCalendarApp.factory('componentObj', [componentObj]);
 schoolCalendarApp.factory('featureParamObj', [featureParamObj]);
 schoolCalendarApp.factory('collectionUtil', [collectionUtil]);
 schoolCalendarApp.factory('baseRepository', ['$q', '$http', baseRepository]);
-schoolCalendarApp.factory('repositoryServices', ['baseRepository', repositoryServices]);
+schoolCalendarApp.factory('repositoryServices', ['featureParamObj', 'collectionUtil', 'baseRepository', repositoryServices]);
 schoolCalendarApp.factory('resourceServices', ['$q', "ngI18nResourceBundle", "ngI18nConfig", initStaticResources]);
 
 // define all object will be used as communicate objects
@@ -113,7 +113,7 @@ function baseRepository($q, $http) {
 };
 
 function repositoryServices(featureParamObj, collectionUtil, baseRepository) {
-    return {
+    var repositoryServices =  {
         context : 'http://localhost:8080',
 
         targetFeature: '',
@@ -129,7 +129,7 @@ function repositoryServices(featureParamObj, collectionUtil, baseRepository) {
         },
 
         generateBaseUrl: function() {
-            var baseUrl = context.concat("/", targetFeature);
+            var baseUrl = this.context.concat("/", this.targetFeature);
             return baseUrl;
         },
 
@@ -139,17 +139,17 @@ function repositoryServices(featureParamObj, collectionUtil, baseRepository) {
             // generate base url for current working feature
             // examples: if current working feature is grade,
             // the base url would be http://localhost/grade
-            var baseUrl = generateBaseUrl();
+            var baseUrl = this.generateBaseUrl();
 
             // checking url has generated
             // checking given action has passed
             // checking form input is existed values
             if(baseUrl != '' &&
-               typeof formInput !== 'undefined' /*&&
+               typeof this.formInput !== 'undefined' /*&&
                baseRepository.isValidAction(givenAction)*/) {
                 var completedUrl = baseUrl.concat('/', "req");
                 // calling the service to perform the task
-                return baseRepository.post(completedUrl, formInput);
+                return baseRepository.post(completedUrl, this.formInput);
             }
             return null;
         },
@@ -158,31 +158,46 @@ function repositoryServices(featureParamObj, collectionUtil, baseRepository) {
             // generate base url for current working feature
             // examples: if current working feature is grade,
             // the base url would be http://localhost/grade
-            var baseUrl = generateBaseUrl();
+            var baseUrl = this.generateBaseUrl();
 
             // checking url has generated
             // checking given action has passed
             // checking form input is existed values
             if(baseUrl != '' &&
-               typeof formInput !== 'undefined' /*&&
+               typeof this.formFilter !== 'undefined' /*&&
                baseRepository.isValidAction(givenAction)*/) {
                 var completedUrl = baseUrl.concat('/', "serving");
                 // calling the service to perform the task
-                return baseRepository.get(completedUrl, formInput);
+                return baseRepository.get(completedUrl, this.formFilter);
             }
             return null;
         },
 
-        edit : function() {
-
+        edit : function(propertyName, target, originalList) {
+            // check whether the target update grade is existed,
+            // to prevent the conflict between UI data and DB data
+            if(collectionUtil.isExistedPropertyValue(propertyName, target, originalList)) {
+                formInput[propertyName] = angular.copy(target);
+            }
+            formInput["action"] = baseRepository.UPDATE_ACTION;
+            // scroll to the update form position
+            //$window.scrollTo(0, 0);
         },
 
         remove : function() {
-
-        },
-
-
+            // check whether the target update grade is existed,
+            // to prevent the conflict between UI data and DB data
+            if(collectionUtil.isExistedPropertyValue(propertyName, target, originalList)) {
+                formInput[propertyName][propertyName] = target[propertyName];
+            }
+            // setting the action to the parameters
+            formInput["action"] = repositoryServices.REMOVE_ACTION;
+            // calling service to remove the target grade
+            //repositoryServices.save();
+        }
     }
+
+    return repositoryServices;
 };
 
 // an util for checking array, collection

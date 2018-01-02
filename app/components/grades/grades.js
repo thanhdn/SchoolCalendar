@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('schoolCalendarApp.grades', ['ngRoute'])
+var gradeModule = angular.module('schoolCalendarApp.grades', ['ngRoute']);
 
-    .config(['$routeProvider', function($routeProvider) {
+gradeModule.config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/add-new-grade', {
             templateUrl: 'components/grades/add.html',
             controller: 'GradesController'
@@ -14,88 +14,44 @@ angular.module('schoolCalendarApp.grades', ['ngRoute'])
             controller: 'GradesController'
 
         });
-    }])
-
-    .controller('GradesController',
-            ['$scope',
-            'repositoryServices',   // the central services
-            'collectionUtil',       // the common functions for work with array
-            'componentObj',         // the compoment objects used for binding values
-            '$location',
-            '$window',
-            function($scope, repositoryServices, collectionUtil, componentObj, $location, $window) {
-
-                // the parameter holding any value binding from the edit form
-                $scope.inputGrade = componentObj.inputGrade;
-
-                // the parameter holding the keywords, pagination information
-                $scope.inputFilterGrade = componentObj.inputFilterGrade;
-
-                // the list grade
-                $scope.lstGrades = [];
-
-                $scope.retrieveGrades = function() {
-                    repositoryServices.retrieve("http://localhost:8080/grade/view", $scope.inputFilterGrade)
-                        .success(function(data) {
-                            $scope.lstGrades = data;
-                        }).error(function(err) {
-
-                    });
-                };
-
-                // displays the list grades after the page has fetched
-                $scope.retrieveGrades();
-
-                $scope.saveGrade = function() {
-                    repositoryServices.add("http://localhost:8080/grade/add", $scope.inputGrade)
-                        .success(function(data) {
-                            // reset the form
-                            $scope.inputGrade = {action : repositoryServices.INS_ACTION};
-                            // refresh the list grades after insert or update a record
-                            $scope.retrieveGrades();
-                        }).error(function (err) {
-
-                    });
-                };
-
-
-                // init data on update event
-                $scope.editGrade = function(_grade) {
-                    // check whether the target update grade is existed,
-                    // to prevent the conflict between UI data and DB data
-                    if(collectionUtil.isExistedPropertyValue("id", _grade, $scope.lstGrades)) {
-                        $scope.inputGrade["grade"] = angular.copy(_grade);
-                    }
-                    $scope.inputGrade["action"] = repositoryServices.UPDATE_ACTION;
-                    // scroll to the update form position
-                    $window.scrollTo(0, 0);
-                };
-
-                $scope.removeGrade = function(_grade) {
-                    // check whether the target update grade is existed,
-                    // to prevent the conflict between UI data and DB data
-                    if(collectionUtil.isExistedPropertyValue("id", _grade, $scope.lstGrades)) {
-                        $scope.inputGrade["grade"].id = _grade.id;
-                    }
-                    // setting the action to the parameters
-                    $scope.inputGrade["action"] = repositoryServices.REMOVE_ACTION;
-                    // calling service to remove the target grade
-                    $scope.saveGrade();
-                }
 }]);
 
+gradeModule.controller('GradesController',
+    ['$q', '$scope', 'repositoryServices', 'featureParamObj', gradeCtrl]);
 
-function gradeCtrl($scope, repository) {
-     // the parameter holding any value binding from the edit form
-    $scope.inputGrade = componentObj.inputGrade;
+function gradeCtrl($q, $scope, repositoryServices, featureParamObj) {
+    // the parameter holding any value binding from the edit form
+    $scope.inputGrade = featureParamObj.prmGrade;
     // the parameter holding the keywords, pagination information
-    $scope.inputFilterGrade = componentObj.inputFilterGrade;
+    $scope.inputFilterGrade = featureParamObj.prmFilterGrade;
+    $scope.lstGrades = [];
 
-    repository.initFeature("grade", $scope.inputGrade, $scope.inputFilterGrade);
+    repositoryServices.initFeature("grade", $scope.inputGrade, $scope.inputFilterGrade);
 
-    $scope.save = repository.save();
-    $scope.edit = repository.edit();
-    $scope.remove = repository.remove();
-    //$scope.save = repository.save();
-    $scope.feature = repository;
+    $scope.filter = function () {
+        var dfFilter = $q.defer();
+        repositoryServices.filter().then(function (data) {
+            $scope.lstGrades = data;
+            dfFilter.resolve(data);
+        });
+        return dfFilter.promise;
+    }
+
+    $scope.save = function() {
+        //angular.element("gradePrimaryButton").attr("class", "ui primary loading button");
+        repositoryServices.save().then($scope.filter).then(function() {
+            //angular.element("gradePrimaryButton").attr("class", "ui primary button");
+            //document.getElementsByTagName("input")[0].focus();
+        });
+        $scope.inputGrade = {action:"INS"};
+    }
+
+    $scope.edit = function(_grade) {
+        repositoryServices.edit("id", _grade, $scope.lstGrades);
+    }
+
+    $scope.remove = function(_grade) {
+        repositoryServices.remove("id", _grade, $scope.lstGrades);
+        $scope.save();
+    }
 }

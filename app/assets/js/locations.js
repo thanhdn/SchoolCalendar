@@ -97,3 +97,10 @@ var navSchedule = {
         {"label" : "Sắp xếp thời khóa biểu", "url" : "#\/import"}
     ]
 }*/
+/*function loadResource() {
+       return new Promise(function(resolve, reject) {
+           ngI18nResourceBundle.get({locale: "vi"}).success(function (resourceBundle) {
+               return resolve(resourceBundle);
+           });
+       });
+   };*/

@@ -1,13 +1,16 @@
 {
-    "grade"    : "Khối học",
-    "list"     : "Danh sách",
-    "import"   : "Nhập từ excel",
-    "teacher"  : "Giáo viên",
-    "class"    : "Lớp",
-    "course"   : "Môn học",
-    "schedule" : "Thời khóa biểu",
-    "calendar" : "Lịch",
-    "arrange"  : "Sắp xếp thời khóa biểu"
+    "grade"         : "Khối học",
+    "gradeId"       : "Mã khối học",
+    "gradeName"     : "Tên khối học",
+    "lectureNumber" : "Số tiết buổi chiều",
+    "list"          : "Danh sách",
+    "import"        : "Nhập từ excel",
+    "teacher"       : "Giáo viên",
+    "class"         : "Lớp",
+    "course"        : "Môn học",
+    "schedule"      : "Thời khóa biểu",
+    "calendar"      : "Lịch",
+    "arrange"       : "Sắp xếp thời khóa biểu"
 
 }
 

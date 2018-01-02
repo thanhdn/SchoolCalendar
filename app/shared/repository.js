@@ -184,14 +184,14 @@ function repositoryServices(featureParamObj, collectionUtil, baseRepository) {
             //$window.scrollTo(0, 0);
         },
 
-        remove : function() {
+        remove : function(propertyName, target, originalList) {
             // check whether the target update grade is existed,
             // to prevent the conflict between UI data and DB data
             if(collectionUtil.isExistedPropertyValue(propertyName, target, originalList)) {
-                formInput[propertyName][propertyName] = target[propertyName];
+                this.formInput[propertyName] = target;
             }
             // setting the action to the parameters
-            formInput["action"] = repositoryServices.REMOVE_ACTION;
+            this.formInput["action"] = baseRepository.REMOVE_ACTION;
             // calling service to remove the target grade
             //repositoryServices.save();
         }
@@ -211,7 +211,7 @@ function collectionUtil() {
             return false;
         },
 
-        // check whether the givent given destination variale is existed in given collection
+        // check whether the given destination variable is existed in given collection
         isExistedPropertyValue : function(propertyName, dest, collection) {
             if(typeof collection === 'undefined' ||
                 typeof dest === 'undefined') {

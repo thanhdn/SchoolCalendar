@@ -51,7 +51,7 @@ function gradeCtrl($q, $scope, repositoryServices, featureParamObj) {
     }
 
     $scope.remove = function(_grade) {
-        repositoryServices.remove("id", _grade, $scope.lstGrades);
+        repositoryServices.remove("grade", _grade, $scope.lstGrades);
         $scope.save();
     }
 }

@@ -1,0 +1,118 @@
+import React from 'react';
+
+class FruitProviderDistribute extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      fruitInStock : [{
+        fruitId: '',
+        fruitTracker : {
+          availableFruits : 0,
+          fruitsHaveBeenSold : 0
+        }
+      }],
+
+      numberOfNeededFruits : 0,
+      neededFruits: []
+    }
+  }
+
+  settingNumberOfNeededFruits(event) {
+        this.setState({numberOfNeededFruits: event.target.value});
+  }
+
+  // sending havert request everytime the fruits are out of stock
+  sendingHavertRequest(event) {
+    const fruitInStock = this.state.fruitInStock;
+    const neededFruits = [];
+    fruitInStock.map((fruit, idx) => {
+      // if the fruit is out of stock, sending request to havert
+      if(fruit.fruitTracker.availableFruits == 0) {
+         // push needed fruit into the havert schedule
+         neededFruits.push(
+          <Fruits
+            key = {idx}
+            fruitId = {fruit.fruitId}
+            neededNumber = {this.state.numberOfNeededFruits} />
+          )
+      }
+    });
+    return neededFruits.join('');
+    event.preventDefault();
+  }
+
+  // displays available fruits to customers
+  displayAvailableFruits() {
+    const fruitInStock = this.state.fruitInStock;
+    const sellingFruits = [];
+
+    fruitInStock.map((fruit, idx) => {
+      if(fruit.fruitTracker.availableFruits > 0) {
+         // push needed fruit into current selling board
+         sellingFruits.push(
+          <Fruits
+            key = {idx}
+            fruitId = {fruit.fruitId}
+            onClick = {() => sellingFruits(idx)}
+            availableFruits = {this.state.availableFruits} />
+          )
+      }
+    }
+    return sellingFruits.join('');
+  }
+
+  // everytim an eater click on fruits selling board, the stock will be updated
+  sellingFruits(i) {
+    const remaining = this.state.fruitInStock[i].fruitTracker.availableFruits;
+    const sold = this.state.fruitInStock[i].fruitTracker.fruitsHaveBeenSold;
+    this.state.fruitInStock[i].fruitTracker.availableFruits = remaining - 1;
+    this.state.fruitInStock[i].fruitTracker.fruitsHaveBeenSold = sold - 1;
+  }
+
+  render() {
+    return (
+      <div>{displayAvailableFruits()}</div>
+      <div><button onClick={(e) => sendingHavertRequest(e)}>Sending request</button></div>
+    )
+  }
+}
+
+class Eater extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      customerId : '',
+      name : '',
+      favoriteFruit: '', //
+      neededFruits: [{
+        fruitId : '',
+        numberOfNeeded : 0
+      }]
+    }
+  }
+}
+
+
+class Fruits extends React.Component {
+  constructor() {
+    super();
+    this.sate = {
+      fruit = {
+        fruitId : '',
+        fruitName : ''
+      }
+    }
+  }
+
+  havert() {
+
+  }
+}
+
+const PRODUCTS = [{"apple", "1"},
+{"banana", "2"},
+{"mango", "3"},
+{"strawberry", "4"},
+{"waterlemon", "5"}
+];
+export default Example03
